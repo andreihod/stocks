@@ -2,8 +2,8 @@ package com.andreih.stocks.module
 
 import com.andreih.stocks.data.repository.StocksRepository
 import com.andreih.stocks.data.repository.StocksRepositoryImpl
-import com.andreih.stocks.network.AlphaVantageNetworkDataSource
-import com.andreih.stocks.network.retrofit.RetrofitAlphaVantageNetwork
+import com.andreih.stocks.network.MarketStackNetworkDataSource
+import com.andreih.stocks.network.retrofit.RetrofitMarketStackNetwork
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -18,7 +18,7 @@ abstract class StocksModule {
     ): StocksRepository
 
     @Binds
-    abstract fun bindAlphaVantageNetworkDataSource(
-        alphaVantageNetworkDataSource: RetrofitAlphaVantageNetwork
-    ): AlphaVantageNetworkDataSource
+    abstract fun bindMarketStackNetworkDataSource(
+        marketStackNetworkDataSource: RetrofitMarketStackNetwork
+    ): MarketStackNetworkDataSource
 }

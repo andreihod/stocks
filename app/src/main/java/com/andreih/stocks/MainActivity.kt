@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launchWhenResumed {
-            stocksRepository.fetchQuote("APPL").onSuccess {
+            stocksRepository.search("APPL").onSuccess {
                 println(it)
             }.onFailure {
                 println("falhou $it")
