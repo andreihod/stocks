@@ -8,7 +8,7 @@ import kotlinx.coroutines.CancellationException
  * taking care not to break structured concurrency
  */
 suspend fun <T> suspendRunCatching(block: suspend () -> T): Result<T> = try {
-    Result.success(block())
+    Result.Success(block())
 } catch (cancellationException: CancellationException) {
     throw cancellationException
 } catch (exception: Exception) {
@@ -17,5 +17,5 @@ suspend fun <T> suspendRunCatching(block: suspend () -> T): Result<T> = try {
         "Failed to evaluate a suspendRunCatchingBlock. Returning failure Result",
         exception
     )
-    Result.failure(exception)
+    Result.Error(exception)
 }

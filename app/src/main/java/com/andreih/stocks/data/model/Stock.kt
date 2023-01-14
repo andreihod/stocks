@@ -10,7 +10,9 @@ data class Stock(
     val name: StockName,
     val symbol: StockSymbol,
     val stockExchange: StockExchange
-)
+) {
+    val key = "${symbol.value}/${stockExchange.micId.value}"
+}
 
 @JvmInline
 value class StockExchangeName(val value: String)

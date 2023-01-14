@@ -3,59 +3,51 @@ package com.andreih.stocks
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.lifecycleScope
-import com.andreih.stocks.data.repository.StocksRepository
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.andreih.stocks.commom.Result
+import com.andreih.stocks.data.model.Stock
 import com.andreih.stocks.ui.theme.StocksTheme
+import com.andreih.stocks.ui.screen.HomeScreen
+import com.andreih.stocks.ui.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    @Inject
-    lateinit var stocksRepository: StocksRepository
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        lifecycleScope.launchWhenResumed {
-            stocksRepository.search("APPL").onSuccess {
-                println(it)
-            }.onFailure {
-                println("falhou $it")
-            }
-        }
-
         setContent {
-            StocksTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
-                }
+            StocksTheme(dynamicColor = false) {
+                StocksApp()
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
+fun StocksApp() {
+    val viewModel: HomeViewModel = viewModel()
+    val initialState = Result.Success(listOf<Stock>())
+    val searchStocks by viewModel.searchStocksFlow.collectAsStateWithLifecycle(initialState)
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    StocksTheme {
-        Greeting("Android")
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            HomeScreen(viewModel.query, searchStocks) {
+                viewModel.updateQuery(it)
+            }
+        }
     }
 }

@@ -54,8 +54,6 @@ class RetrofitMarketStackNetwork @Inject constructor(): MarketStackNetworkDataSo
                         .addQueryParameter("access_key", BuildConfig.MARKETSTACK_API_KEY)
                         .build()
 
-                    println(url)
-
                     it.proceed(original.newBuilder().url(url).build())
                 }
                 .addInterceptor(
