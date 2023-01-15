@@ -1,6 +1,9 @@
 package com.andreih.stocks.ui.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,6 +13,8 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.*
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,11 +26,21 @@ import com.andreih.stocks.ui.theme.StocksTheme
 fun HomeScreen(
     query: String,
     searchStocksResult: Result<List<Stock>>,
+    onSearchFocusChanged: (Boolean) -> Unit,
     onQueryChanged: (String) -> Unit
 ) {
-    SearchBox(query, onQueryChanged)
+    val focusManager = LocalFocusManager.current
+    val interactionSource = remember { MutableInteractionSource() }
 
-    Box {
+    SearchBox(query, onSearchFocusChanged, onQueryChanged)
+
+    Box(
+        Modifier
+            .fillMaxSize()
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) { focusManager.clearFocus() }) {
         StockSearchList(searchStocksResult)
     }
 }
@@ -61,13 +76,16 @@ fun StockSearchList(searchStocksResult: Result<List<Stock>>) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBox(query: String, onQueryChanged: (String) -> Unit) {
+fun SearchBox(query: String, onFocusChanged: (Boolean) -> Unit, onQueryChanged: (String) -> Unit) {
     OutlinedTextField(
         value = query,
         placeholder = { Text("Search a stock") },
+        maxLines = 1,
         singleLine = true,
         onValueChange = onQueryChanged,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .onFocusChanged { onFocusChanged(it.isFocused) },
         leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search") },
         shape = RoundedCornerShape(100.dp)
     )
@@ -95,12 +113,9 @@ fun HomeScreenPreview() {
             )
         )
 
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            Column(Modifier.padding(16.dp)) {
-                HomeScreen(query, searchStocksResult) {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            Column(Modifier.background(MaterialTheme.colorScheme.secondaryContainer).padding(16.dp)) {
+                HomeScreen(query, searchStocksResult, { }) {
                     query = it
                 }
             }
