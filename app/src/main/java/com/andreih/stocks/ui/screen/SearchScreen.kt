@@ -19,34 +19,49 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.andreih.stocks.commom.Result
 import com.andreih.stocks.data.model.*
 import com.andreih.stocks.ui.theme.StocksTheme
+import com.andreih.stocks.ui.viewmodel.SearchViewModel
 
 @Composable
-fun SearchScreen(
+fun SearchScreen(viewModel: SearchViewModel = viewModel()) {
+    val initialState = Result.Success(listOf<Stock>())
+    val searchStocks by viewModel.searchStocksFlow.collectAsStateWithLifecycle(initialState)
+
+    SearchScreen(viewModel.query, searchStocks) {
+        viewModel.updateQuery(it)
+    }
+}
+
+@Composable
+private fun SearchScreen(
     query: String,
     searchStocksResult: Result<List<Stock>>,
     onQueryChanged: (String) -> Unit
 ) {
     var isSearching by remember { mutableStateOf(false) }
 
-    SearchBox(query, { isSearching = it }, onQueryChanged)
+    Column {
+        SearchBox(query, { isSearching = it }, onQueryChanged)
 
-    AnimatedVisibility(
-        visible = isSearching,
-        enter = expandHorizontally(),
-        exit = shrinkHorizontally()
-    ) {
-        Divider(
-            Modifier.padding(0.dp, 16.dp),
-            color = MaterialTheme.colorScheme.onBackground,
-            thickness = 1.dp
-        )
-    }
+        AnimatedVisibility(
+            visible = isSearching,
+            enter = expandHorizontally(),
+            exit = shrinkHorizontally()
+        ) {
+            Divider(
+                Modifier.padding(0.dp, 16.dp),
+                color = MaterialTheme.colorScheme.onBackground,
+                thickness = 1.dp
+            )
+        }
 
-    Box(Modifier.fillMaxSize()) {
-        StockSearchList(searchStocksResult)
+        Box(Modifier.fillMaxSize()) {
+            StockSearchList(searchStocksResult)
+        }
     }
 }
 
