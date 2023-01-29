@@ -2,7 +2,9 @@ package com.andreih.stocks.ui.viewmodel
 
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.andreih.stocks.commom.Result
+import com.andreih.stocks.data.model.Stock
 import com.andreih.stocks.data.repository.StocksRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -28,6 +30,11 @@ class SearchViewModel @Inject constructor(
         .conflate()
         .map(::handleSearchInput)
         .flattenConcat()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            Result.Success(listOf())
+        )
 
     fun updateQuery(newQuery: String) {
         query = newQuery
