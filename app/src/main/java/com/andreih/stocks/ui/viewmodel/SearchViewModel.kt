@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class SearchViewModel @Inject constructor(
     private val stocksRepository: StocksRepository
 ) : ViewModel() {
     private sealed class SearchInput {

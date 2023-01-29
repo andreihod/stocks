@@ -16,8 +16,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.andreih.stocks.commom.Result
 import com.andreih.stocks.data.model.Stock
 import com.andreih.stocks.ui.theme.StocksTheme
-import com.andreih.stocks.ui.screen.HomeScreen
-import com.andreih.stocks.ui.viewmodel.HomeViewModel
+import com.andreih.stocks.ui.screen.SearchScreen
+import com.andreih.stocks.ui.viewmodel.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -35,13 +35,13 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun StocksApp() {
-    val viewModel: HomeViewModel = viewModel()
+    val viewModel: SearchViewModel = viewModel()
     val initialState = Result.Success(listOf<Stock>())
     val searchStocks by viewModel.searchStocksFlow.collectAsStateWithLifecycle(initialState)
 
     Surface(Modifier.fillMaxSize()) {
         Column(Modifier.padding(16.dp)) {
-            HomeScreen(viewModel.query, searchStocks) {
+            SearchScreen(viewModel.query, searchStocks) {
                 viewModel.updateQuery(it)
             }
         }
