@@ -23,6 +23,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.andreih.stocks.ui.screen.SearchScreen
 import com.andreih.stocks.ui.theme.StocksTheme
+import com.andreih.stocks.ui.viewmodel.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

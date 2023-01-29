@@ -28,8 +28,7 @@ import com.andreih.stocks.ui.viewmodel.SearchViewModel
 
 @Composable
 fun SearchScreen(viewModel: SearchViewModel = viewModel()) {
-    val initialState = Result.Success(listOf<Stock>())
-    val searchStocks by viewModel.searchStocksFlow.collectAsStateWithLifecycle(initialState)
+    val searchStocks by viewModel.searchStocksFlow.collectAsStateWithLifecycle()
 
     SearchScreen(viewModel.query, searchStocks) {
         viewModel.updateQuery(it)
