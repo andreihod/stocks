@@ -24,7 +24,7 @@ import com.andreih.stocks.data.model.*
 import com.andreih.stocks.ui.theme.StocksTheme
 
 @Composable
-fun HomeScreen(
+fun SearchScreen(
     query: String,
     searchStocksResult: Result<List<Stock>>,
     onQueryChanged: (String) -> Unit
@@ -109,7 +109,7 @@ fun SearchBox(query: String, onFocusChanged: (Boolean) -> Unit, onQueryChanged: 
 
 @Preview(showBackground = true)
 @Composable
-fun HomeScreenPreview() {
+fun SearchScreenPreview() {
     StocksTheme(false) {
         var query by remember { mutableStateOf("") }
         val searchStocksResult = Result.Success(
@@ -131,7 +131,7 @@ fun HomeScreenPreview() {
 
         Surface(modifier = Modifier.fillMaxSize()) {
             Column(Modifier.padding(16.dp)) {
-                HomeScreen(query, searchStocksResult) {
+                SearchScreen(query, searchStocksResult) {
                     query = it
                 }
             }
