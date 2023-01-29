@@ -1,9 +1,9 @@
 package com.andreih.stocks.ui.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.*
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,21 +27,25 @@ import com.andreih.stocks.ui.theme.StocksTheme
 fun HomeScreen(
     query: String,
     searchStocksResult: Result<List<Stock>>,
-    onSearchFocusChanged: (Boolean) -> Unit,
     onQueryChanged: (String) -> Unit
 ) {
-    val focusManager = LocalFocusManager.current
-    val interactionSource = remember { MutableInteractionSource() }
+    var isSearching by remember { mutableStateOf(false) }
 
-    SearchBox(query, onSearchFocusChanged, onQueryChanged)
+    SearchBox(query, { isSearching = it }, onQueryChanged)
 
-    Box(
-        Modifier
-            .fillMaxSize()
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null
-            ) { focusManager.clearFocus() }) {
+    AnimatedVisibility(
+        visible = isSearching,
+        enter = expandHorizontally(),
+        exit = shrinkHorizontally()
+    ) {
+        Divider(
+            Modifier.padding(0.dp, 16.dp),
+            color = MaterialTheme.colorScheme.onBackground,
+            thickness = 1.dp
+        )
+    }
+
+    Box(Modifier.fillMaxSize()) {
         StockSearchList(searchStocksResult)
     }
 }
@@ -48,7 +53,7 @@ fun HomeScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StockSearchList(searchStocksResult: Result<List<Stock>>) {
-    Box(Modifier.padding(0.dp, 16.dp)) {
+    Box {
         when (searchStocksResult) {
             is Result.Success -> {
                 LazyColumn {
@@ -77,6 +82,14 @@ fun StockSearchList(searchStocksResult: Result<List<Stock>>) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBox(query: String, onFocusChanged: (Boolean) -> Unit, onQueryChanged: (String) -> Unit) {
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(query) {
+        if (query.isEmpty()) {
+            focusManager.clearFocus()
+        }
+    }
+
     OutlinedTextField(
         value = query,
         placeholder = { Text("Search a stock") },
@@ -87,7 +100,10 @@ fun SearchBox(query: String, onFocusChanged: (Boolean) -> Unit, onQueryChanged: 
             .fillMaxWidth()
             .onFocusChanged { onFocusChanged(it.isFocused) },
         leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search") },
-        shape = RoundedCornerShape(100.dp)
+        shape = RoundedCornerShape(100.dp),
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = Color.Transparent
+        )
     )
 }
 
@@ -114,8 +130,8 @@ fun HomeScreenPreview() {
         )
 
         Surface(modifier = Modifier.fillMaxSize()) {
-            Column(Modifier.background(MaterialTheme.colorScheme.secondaryContainer).padding(16.dp)) {
-                HomeScreen(query, searchStocksResult, { }) {
+            Column(Modifier.padding(16.dp)) {
+                HomeScreen(query, searchStocksResult) {
                     query = it
                 }
             }
