@@ -4,10 +4,12 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andreih.stocks.commom.Result
+import com.andreih.stocks.data.model.StockSymbol
 import com.andreih.stocks.data.repository.StocksRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
@@ -23,6 +25,14 @@ class SearchViewModel @Inject constructor(
     var query by mutableStateOf("")
         private set
 
+    val flowSymbols = stocksRepository
+        .flowSymbols()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            listOf()
+        )
+
     val searchStocksFlow = snapshotFlow { query }
         .map(::mapQueryToSearchInput)
         .debounce(500L)
@@ -37,6 +47,16 @@ class SearchViewModel @Inject constructor(
 
     fun updateQuery(newQuery: String) {
         query = newQuery
+    }
+
+    fun updateSymbolState(symbol: StockSymbol) {
+        viewModelScope.launch {
+            if (flowSymbols.value.contains(symbol)) {
+                stocksRepository.removeSymbol(symbol)
+            } else {
+                stocksRepository.addSymbol(symbol)
+            }
+        }
     }
 
     private fun mapQueryToSearchInput(query: String) =

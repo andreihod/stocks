@@ -25,7 +25,7 @@ interface StocksRepository {
 
     suspend fun removeSymbol(symbol: StockSymbol)
 
-    suspend fun streamSymbols(): Flow<Result<List<StockSymbol>>>
+    fun flowSymbols(): Flow<List<StockSymbol>>
 }
 
 class StocksRepositoryImpl @Inject constructor(
@@ -47,10 +47,9 @@ class StocksRepositoryImpl @Inject constructor(
         stocksDao.deleteBySymbol(symbol.value)
     }
 
-    override suspend fun streamSymbols(): Flow<Result<List<StockSymbol>>> =
+    override fun flowSymbols(): Flow<List<StockSymbol>> =
         stocksDao
-            .streamStocks()
+            .flowAllSymbols()
             .map { it.map { stock -> StockSymbol(stock.symbol) } }
             .distinctUntilChanged()
-            .asResult()
 }

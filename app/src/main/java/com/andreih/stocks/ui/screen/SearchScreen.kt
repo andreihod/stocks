@@ -1,17 +1,21 @@
 package com.andreih.stocks.ui.screen
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.*
 import androidx.compose.ui.graphics.Color
@@ -29,16 +33,23 @@ import com.andreih.stocks.ui.viewmodel.SearchViewModel
 @Composable
 fun SearchScreen(viewModel: SearchViewModel = viewModel()) {
     val searchStocks by viewModel.searchStocksFlow.collectAsStateWithLifecycle()
+    val watchedSymbols by viewModel.flowSymbols.collectAsStateWithLifecycle()
 
-    SearchScreen(viewModel.query, searchStocks) {
-        viewModel.updateQuery(it)
-    }
+    SearchScreen(
+        query = viewModel.query,
+        watchedSymbols = watchedSymbols,
+        searchStocksResult = searchStocks,
+        onSymbolClicked = viewModel::updateSymbolState,
+        onQueryChanged = viewModel::updateQuery
+    )
 }
 
 @Composable
 private fun SearchScreen(
     query: String,
+    watchedSymbols: List<StockSymbol>,
     searchStocksResult: Result<List<Stock>>,
+    onSymbolClicked: (StockSymbol) -> Unit,
     onQueryChanged: (String) -> Unit
 ) {
     var isSearching by remember { mutableStateOf(false) }
@@ -59,36 +70,80 @@ private fun SearchScreen(
         }
 
         Box(Modifier.fillMaxSize()) {
-            StockSearchList(searchStocksResult)
+            StockSearchList(watchedSymbols, searchStocksResult, onSymbolClicked)
         }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun StockSearchList(searchStocksResult: Result<List<Stock>>) {
+fun StockSearchList(
+    watchedSymbols: List<StockSymbol>,
+    searchStocksResult: Result<List<Stock>>,
+    onSymbolClicked: (StockSymbol) -> Unit
+) {
     Box {
         when (searchStocksResult) {
             is Result.Success -> {
                 LazyColumn {
                     items(searchStocksResult.data, key = { it.key }) {
-                        Column(
-                            Modifier
-                                .padding(16.dp)
-                                .fillMaxWidth()
-                                .animateItemPlacement()
-                        ) {
-                            Text(it.symbol.value, fontSize = 20.sp)
-                            Text(
-                                it.name.value,
-                                fontSize = 14.sp,
-                                color = MaterialTheme.colorScheme.outline
-                            )
+                        val hasSymbolWatched by remember(watchedSymbols) {
+                            derivedStateOf {
+                                watchedSymbols.contains(it.symbol)
+                            }
                         }
+
+                        StockSearchItem(it, hasSymbolWatched, onSymbolClicked)
                     }
                 }
             }
             else -> {}
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
+@Composable
+fun LazyItemScope.StockSearchItem(
+    stock: Stock,
+    hasSymbolWatched: Boolean,
+    onSymbolClicked: (StockSymbol) -> Unit
+) {
+    Row(
+        Modifier
+            .clickable { onSymbolClicked(stock.symbol) }
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(
+            Modifier
+                .weight(1.0f, fill = true)
+                .animateItemPlacement()
+        ) {
+            Text(stock.symbol.value, fontSize = 20.sp)
+            Text(
+                stock.name.value,
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.outline
+            )
+        }
+
+        AnimatedContent(
+            targetState = hasSymbolWatched,
+            transitionSpec = {
+                if (targetState) {
+                    slideInVertically { height -> height } + fadeIn() with
+                            slideOutVertically { height -> -height } + fadeOut()
+                } else {
+                    slideInVertically { height -> -height } + fadeIn() with
+                            slideOutVertically { height -> height } + fadeOut()
+                }
+            }
+        ) { isWatched ->
+            Icon(
+                if (isWatched) Icons.Filled.Remove else Icons.Filled.Add,
+                contentDescription = if (isWatched) "Remove" else "Add",
+                modifier = Modifier.size(32.dp)
+            )
         }
     }
 }
@@ -126,6 +181,8 @@ fun SearchBox(query: String, onFocusChanged: (Boolean) -> Unit, onQueryChanged: 
 fun SearchScreenPreview() {
     StocksTheme(false) {
         var query by remember { mutableStateOf("") }
+        val watchedSymbols = remember { mutableStateListOf(StockSymbol("PETR4.SA")) }
+
         val searchStocksResult = Result.Success(
             listOf(
                 Stock(
@@ -145,9 +202,18 @@ fun SearchScreenPreview() {
 
         Surface(modifier = Modifier.fillMaxSize()) {
             Column(Modifier.padding(16.dp)) {
-                SearchScreen(query, searchStocksResult) {
-                    query = it
-                }
+                SearchScreen(
+                    query = query,
+                    watchedSymbols = watchedSymbols,
+                    searchStocksResult = searchStocksResult,
+                    onSymbolClicked = {
+                        if (watchedSymbols.contains(it))
+                            watchedSymbols.remove(it)
+                        else
+                            watchedSymbols.add(it)
+                    },
+                    onQueryChanged = { query = it }
+                )
             }
         }
     }
