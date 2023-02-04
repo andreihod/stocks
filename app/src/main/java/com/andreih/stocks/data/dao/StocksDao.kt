@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface StocksDao {
     @Query("SELECT uid, stock_symbol FROM stocks")
-    fun streamStocks(): Flow<List<StockEntity>>
+    fun flowAllSymbols(): Flow<List<StockEntity>>
 
     @Insert
     suspend fun insert(stock: StockEntity)

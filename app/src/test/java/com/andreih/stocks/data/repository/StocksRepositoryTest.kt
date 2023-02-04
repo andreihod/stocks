@@ -21,7 +21,7 @@ class StocksRepositoryTest {
     private lateinit var subjectSuccess: StocksRepository
     private lateinit var subjectError: StocksRepository
     private val stocksDao = object : StocksDao {
-        override fun streamStocks(): Flow<List<StockEntity>> = flowOf(listOf())
+        override fun flowAllSymbols(): Flow<List<StockEntity>> = flowOf(listOf())
         override suspend fun insert(stock: StockEntity) {}
         override suspend fun deleteBySymbol(stockSymbol: String) {}
     }
