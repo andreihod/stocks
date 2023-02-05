@@ -21,11 +21,11 @@ interface StocksRepository {
 
     suspend fun search(query: String): Flow<Result<List<Stock>>>
 
-    suspend fun addSymbol(symbol: StockSymbol)
+    suspend fun watchSymbol(symbol: StockSymbol)
 
-    suspend fun removeSymbol(symbol: StockSymbol)
+    suspend fun unwatchSymbol(symbol: StockSymbol)
 
-    fun flowSymbols(): Flow<List<StockSymbol>>
+    fun flowWatchedSymbols(): Flow<List<StockSymbol>>
 }
 
 class StocksRepositoryImpl @Inject constructor(
@@ -39,15 +39,15 @@ class StocksRepositoryImpl @Inject constructor(
     override suspend fun search(query: String): Flow<Result<List<Stock>>> =
         flow { emit(marketStackNetwork.search(query).map(NetworkStock::intoStock)) }.asResult()
 
-    override suspend fun addSymbol(symbol: StockSymbol) {
+    override suspend fun watchSymbol(symbol: StockSymbol) {
         stocksDao.insert(StockEntity(0, symbol.value))
     }
 
-    override suspend fun removeSymbol(symbol: StockSymbol) {
+    override suspend fun unwatchSymbol(symbol: StockSymbol) {
         stocksDao.deleteBySymbol(symbol.value)
     }
 
-    override fun flowSymbols(): Flow<List<StockSymbol>> =
+    override fun flowWatchedSymbols(): Flow<List<StockSymbol>> =
         stocksDao
             .flowAllSymbols()
             .map { it.map { stock -> StockSymbol(stock.symbol) } }
