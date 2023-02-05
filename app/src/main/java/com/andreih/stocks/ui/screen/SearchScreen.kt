@@ -33,7 +33,7 @@ import com.andreih.stocks.ui.viewmodel.SearchViewModel
 @Composable
 fun SearchScreen(viewModel: SearchViewModel = viewModel()) {
     val searchStocks by viewModel.searchStocksFlow.collectAsStateWithLifecycle()
-    val watchedSymbols by viewModel.flowSymbols.collectAsStateWithLifecycle()
+    val watchedSymbols by viewModel.flowWatchedSymbols.collectAsStateWithLifecycle()
 
     SearchScreen(
         query = viewModel.query,

@@ -25,8 +25,8 @@ class SearchViewModel @Inject constructor(
     var query by mutableStateOf("")
         private set
 
-    val flowSymbols = stocksRepository
-        .flowSymbols()
+    val flowWatchedSymbols = stocksRepository
+        .flowWatchedSymbols()
         .stateIn(
             viewModelScope,
             SharingStarted.Lazily,
@@ -51,10 +51,10 @@ class SearchViewModel @Inject constructor(
 
     fun updateSymbolState(symbol: StockSymbol) {
         viewModelScope.launch {
-            if (flowSymbols.value.contains(symbol)) {
-                stocksRepository.removeSymbol(symbol)
+            if (flowWatchedSymbols.value.contains(symbol)) {
+                stocksRepository.unwatchSymbol(symbol)
             } else {
-                stocksRepository.addSymbol(symbol)
+                stocksRepository.watchSymbol(symbol)
             }
         }
     }
