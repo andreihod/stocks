@@ -34,6 +34,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments += mapOf("clearPackageData" to "true")
+
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -50,7 +52,6 @@ android {
         ) : CommandLineArgumentProvider {
             override fun asArguments(): Iterable<String> = listOf("-Aroom.schemaLocation=${schemaDir.path}")
         }
-
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -78,6 +79,10 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    testOptions {
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
 
     kotlinOptions {
@@ -139,7 +144,10 @@ dependencies {
     androidTestImplementation("app.cash.turbine:turbine:0.12.1")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test:runner:1.5.2")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeVersion")
+    androidTestUtil("androidx.test:orchestrator:1.4.2")
+    
     debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")
     debugImplementation("androidx.compose.ui:ui-test-manifest:$composeVersion")
 }
