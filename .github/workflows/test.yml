@@ -38,7 +38,7 @@ jobs:
         run: cp local.properties.ci local.properties
 
       - name: Build and Test with Gradle
-        run: ./gradlew assembleDebug testDebugUnitTest
+        run: ./gradlew clean assembleDebug testDebugUnitTest
 
       - name: Android Test Report
         uses: asadmansr/android-test-report-action@v1.2.0
@@ -51,7 +51,7 @@ jobs:
           path: app/build/outputs/apk/debug/app-debug.apk
 
       - name: Build androidTest APK
-        run: ./gradlew assembleDebugAndroidTest
+        run: ./gradlew clean assembleDebugAndroidTest
 
       - name: Upload androidTest APK
         uses: actions/upload-artifact@v1
