@@ -1,43 +1,31 @@
 package com.andreih.stocks.network.model
 
 import com.andreih.stocks.data.model.*
-import kotlinx.datetime.TimeZone
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.net.URL
 
 @Serializable
 data class NetworkStock(
+    @SerialName("shortname")
     val name: String,
+    @SerialName("longname")
+    val longName: String,
     val symbol: String,
+    val score: Double,
+    @SerialName("exchange")
+    val exchangeSymbol: String,
+    @SerialName("exchDisp")
+    val exchangeName: String,
     @SerialName("stock_exchange")
-    val stockExchange: NetworkStockExchange
-)
-
-@Serializable
-data class NetworkStockExchange(
-    val name: String,
-    val acronym: String?,
-    val mic: String,
-    val country: String?,
-    @SerialName("country_code")
-    val countryCode: String,
-    val city: String?
+    val sector: String?
 )
 
 fun NetworkStock.intoStock(): Stock =
     Stock(
         name = StockName(name),
+        longName = StockLongName(longName),
         symbol = StockSymbol(symbol),
-        stockExchange = stockExchange.intoStockExchange()
+        exchangeSymbol = StockExchangeSymbol(exchangeSymbol),
+        exchangeName = StockExchangeName(exchangeName),
+        sector = sector?.let { StockSectorName(it) }
 )
-
-fun NetworkStockExchange.intoStockExchange(): StockExchange =
-    StockExchange(
-        name = StockExchangeName(name),
-        acronym = acronym?.let { StockExchangeAcronym(it) },
-        micId = StockExchangeMicId(mic),
-        country = country?.let { StockExchangeCountry(it) },
-        countryCode = StockExchangeCountryCode(countryCode),
-        city = city?.let { StockExchangeCity(it) }
-    )

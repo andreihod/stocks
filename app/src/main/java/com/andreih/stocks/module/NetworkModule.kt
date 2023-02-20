@@ -1,9 +1,9 @@
 package com.andreih.stocks.module
 
 import com.andreih.stocks.BuildConfig
-import com.andreih.stocks.network.MarketStackNetworkDataSource
-import com.andreih.stocks.network.retrofit.RetrofitMarketStack
-import com.andreih.stocks.network.retrofit.RetrofitMarketStackNetwork
+import com.andreih.stocks.network.YahooFinanceNetworkDataSource
+import com.andreih.stocks.network.retrofit.RetrofitYahooFinance
+import com.andreih.stocks.network.retrofit.RetrofitYahooFinanceNetwork
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Binds
 import dagger.Module
@@ -20,17 +20,17 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class MarketStackNetworkDataSourceModule {
+abstract class YahooFinanceNetworkDataSourceModule {
     @Singleton
     @Binds
-    abstract fun bindMarketStackNetworkDataSource(
-        marketStackNetworkDataSource: RetrofitMarketStackNetwork
-    ): MarketStackNetworkDataSource
+    abstract fun bindYahooFinanceNetworkDataSource(
+        yahooFinanceNetworkDataSource: RetrofitYahooFinanceNetwork
+    ): YahooFinanceNetworkDataSource
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
-object RetrofitMarketStackModule {
+object RetrofitYahooFinanceModule {
 
     @OptIn(ExperimentalSerializationApi::class)
     @Provides
@@ -39,9 +39,9 @@ object RetrofitMarketStackModule {
 
     @Provides
     @Singleton
-    fun provideRetrofitMarketStack(json: Json): RetrofitMarketStack {
+    fun provideRetrofitYahooFinance(json: Json): RetrofitYahooFinance {
         return Retrofit.Builder()
-            .baseUrl(BuildConfig.MARKETSTACK_URL)
+            .baseUrl("https://${BuildConfig.X_RAPIDAPI_HOST}")
             .addConverterFactory(
                 @OptIn(ExperimentalSerializationApi::class)
                 json.asConverterFactory("application/json".toMediaType())
@@ -49,13 +49,11 @@ object RetrofitMarketStackModule {
             .client(
                 OkHttpClient.Builder()
                     .addNetworkInterceptor {
-                        val original = it.request()
-                        val url = original
-                            .url
-                            .newBuilder()
-                            .addQueryParameter("access_key", BuildConfig.MARKETSTACK_API_KEY)
+                        val newRequest = it.request().newBuilder()
+                            .addHeader("X-RapidAPI-Key", BuildConfig.X_RAPIDAPI_KEY)
+                            .addHeader("X-RapidAPI-Host", BuildConfig.X_RAPIDAPI_HOST)
                             .build()
-                        it.proceed(original.newBuilder().url(url).build())
+                        it.proceed(newRequest)
                     }
                     .addInterceptor(
                         HttpLoggingInterceptor().apply {
@@ -65,6 +63,6 @@ object RetrofitMarketStackModule {
                     .build()
             )
             .build()
-            .create(RetrofitMarketStack::class.java)
+            .create(RetrofitYahooFinance::class.java)
     }
 }

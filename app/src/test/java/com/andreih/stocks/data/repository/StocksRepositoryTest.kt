@@ -4,9 +4,8 @@ import com.andreih.stocks.data.model.*
 import com.andreih.stocks.commom.Result
 import com.andreih.stocks.data.dao.StocksDao
 import com.andreih.stocks.data.entity.StockEntity
-import com.andreih.stocks.network.MarketStackNetworkDataSource
+import com.andreih.stocks.network.YahooFinanceNetworkDataSource
 import com.andreih.stocks.network.model.NetworkStock
-import com.andreih.stocks.network.model.NetworkStockExchange
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -30,30 +29,23 @@ class StocksRepositoryTest {
         private val networkStockList = listOf(
             NetworkStock(
                 name = "ACME Inc.",
+                longName = "ACME Inc.",
                 symbol = "ACME",
-                stockExchange = NetworkStockExchange(
-                    name = "Nasdaq",
-                    acronym = "NSDQ",
-                    mic = "NSDQ",
-                    country = "USA",
-                    countryCode = "USA",
-                    city = "New York"
-                )
+                score = 1202.0,
+                exchangeSymbol = "NYQ",
+                exchangeName = "NYSE",
+                sector = "Fun"
             )
         )
 
         private val expectedStockList = listOf(
             Stock(
                 name = StockName("ACME Inc."),
+                longName = StockLongName("ACME Inc."),
                 symbol = StockSymbol("ACME"),
-                stockExchange = StockExchange(
-                    name = StockExchangeName("Nasdaq"),
-                    acronym = StockExchangeAcronym("NSDQ"),
-                    micId = StockExchangeMicId("NSDQ"),
-                    country = StockExchangeCountry("USA"),
-                    countryCode = StockExchangeCountryCode("USA"),
-                    city = StockExchangeCity("New York")
-                )
+                exchangeSymbol = StockExchangeSymbol("NYQ"),
+                exchangeName = StockExchangeName("NYSE"),
+                sector = StockSectorName("Fun")
             )
         )
 
@@ -64,7 +56,7 @@ class StocksRepositoryTest {
     @Before
     fun init() {
         subjectSuccess = StocksRepositoryImpl(
-            object : MarketStackNetworkDataSource {
+            object : YahooFinanceNetworkDataSource {
                 override suspend fun search(query: String): List<NetworkStock> {
                     return networkStockList
                 }
@@ -72,7 +64,7 @@ class StocksRepositoryTest {
         )
 
         subjectError = StocksRepositoryImpl(
-            object : MarketStackNetworkDataSource {
+            object : YahooFinanceNetworkDataSource {
                 override suspend fun search(query: String): List<NetworkStock> {
                     throw throwableError
                 }
