@@ -125,6 +125,11 @@ fun LazyItemScope.StockSearchItem(
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.outline
             )
+            Text(
+                stock.exchangeName.value,
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.outline
+            )
         }
 
         AnimatedContent(
