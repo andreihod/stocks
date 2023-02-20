@@ -41,8 +41,8 @@ android {
         }
 
         defaultConfig {
-            buildConfigField("String", "MARKETSTACK_API_KEY", "\"${localProperties["marketstack_api_key"]}\"")
-            buildConfigField("String", "MARKETSTACK_URL", "\"${localProperties["marketstack_url"]}\"")
+            buildConfigField("String", "X_RAPIDAPI_KEY", "\"${localProperties["x_rapidapi_key"]}\"")
+            buildConfigField("String", "X_RAPIDAPI_HOST", "\"yh-finance.p.rapidapi.com\"")
         }
 
         class RoomSchemaArgProvider(

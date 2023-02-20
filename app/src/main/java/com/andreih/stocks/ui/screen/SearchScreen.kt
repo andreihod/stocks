@@ -181,21 +181,17 @@ fun SearchBox(query: String, onFocusChanged: (Boolean) -> Unit, onQueryChanged: 
 fun SearchScreenPreview() {
     StocksTheme(false) {
         var query by remember { mutableStateOf("") }
-        val watchedSymbols = remember { mutableStateListOf(StockSymbol("PETR4.SA")) }
+        val watchedSymbols = remember { mutableStateListOf(StockSymbol("PBR")) }
 
         val searchStocksResult = Result.Success(
             listOf(
                 Stock(
-                    name = StockName("Petrobras S.A."),
-                    symbol = StockSymbol("PETR4.SA"),
-                    stockExchange = StockExchange(
-                        name = StockExchangeName("Bovespa"),
-                        acronym = StockExchangeAcronym("BVSP"),
-                        micId = StockExchangeMicId("BVSP"),
-                        countryCode = StockExchangeCountryCode("BR"),
-                        country = StockExchangeCountry("Brazil"),
-                        city = StockExchangeCity("São Paulo")
-                    )
+                    name = StockName("Petroleo Brasileiro S.A.- Petro"),
+                    longName = StockLongName("Petróleo Brasileiro S.A. - Petrobras"),
+                    symbol = StockSymbol("PBR"),
+                    exchangeSymbol = StockExchangeSymbol("NYQ"),
+                    exchangeName = StockExchangeName("NYSE"),
+                    sector = StockSectorName("Energy"),
                 )
             )
         )

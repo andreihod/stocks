@@ -4,39 +4,27 @@ package com.andreih.stocks.data.model
 value class StockName(val value: String)
 
 @JvmInline
+value class StockLongName(val value: String)
+
+@JvmInline
 value class StockSymbol(val value: String)
 
-data class Stock(
-    val name: StockName,
-    val symbol: StockSymbol,
-    val stockExchange: StockExchange
-) {
-    val key = "${symbol.value}/${stockExchange.micId.value}"
-}
+@JvmInline
+value class StockExchangeSymbol(val value: String)
 
 @JvmInline
 value class StockExchangeName(val value: String)
 
 @JvmInline
-value class StockExchangeAcronym(val value: String)
+value class StockSectorName(val value: String)
 
-@JvmInline
-value class StockExchangeMicId(val value: String)
-
-@JvmInline
-value class StockExchangeCountry(val value: String)
-
-@JvmInline
-value class StockExchangeCountryCode(val value: String)
-
-@JvmInline
-value class StockExchangeCity(val value: String)
-
-data class StockExchange(
-    val name: StockExchangeName,
-    val acronym: StockExchangeAcronym?,
-    val micId: StockExchangeMicId,
-    val country: StockExchangeCountry?,
-    val countryCode: StockExchangeCountryCode,
-    val city: StockExchangeCity?
-)
+data class Stock(
+    val name: StockName,
+    val longName: StockLongName,
+    val symbol: StockSymbol,
+    val exchangeSymbol: StockExchangeSymbol,
+    val exchangeName: StockExchangeName,
+    val sector: StockSectorName?
+) {
+    val key = "${symbol.value}/${exchangeSymbol.value}"
+}

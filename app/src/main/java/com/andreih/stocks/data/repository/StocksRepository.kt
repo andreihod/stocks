@@ -7,7 +7,7 @@ import com.andreih.stocks.data.entity.StockEntity
 import com.andreih.stocks.data.model.Stock
 import com.andreih.stocks.data.model.StockQuote
 import com.andreih.stocks.data.model.StockSymbol
-import com.andreih.stocks.network.MarketStackNetworkDataSource
+import com.andreih.stocks.network.YahooFinanceNetworkDataSource
 import com.andreih.stocks.network.model.NetworkStock
 import com.andreih.stocks.network.model.intoStock
 import kotlinx.coroutines.flow.Flow
@@ -29,7 +29,7 @@ interface StocksRepository {
 }
 
 class StocksRepositoryImpl @Inject constructor(
-    private val marketStackNetwork: MarketStackNetworkDataSource,
+    private val yahooFinanceNetwork: YahooFinanceNetworkDataSource,
     private val stocksDao: StocksDao
 ) : StocksRepository {
     override suspend fun fetchQuote(symbol: StockSymbol): Flow<Result<StockQuote>> {
@@ -37,7 +37,7 @@ class StocksRepositoryImpl @Inject constructor(
     }
 
     override suspend fun search(query: String): Flow<Result<List<Stock>>> =
-        flow { emit(marketStackNetwork.search(query).map(NetworkStock::intoStock)) }.asResult()
+        flow { emit(yahooFinanceNetwork.search(query).map(NetworkStock::intoStock)) }.asResult()
 
     override suspend fun watchSymbol(symbol: StockSymbol) {
         stocksDao.insert(StockEntity(0, symbol.value))
