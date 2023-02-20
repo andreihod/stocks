@@ -96,6 +96,11 @@ fun StockSearchList(
                     }
                 }
             }
+            is Result.Loading -> {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            }
             else -> {}
         }
     }
@@ -206,7 +211,7 @@ fun SearchScreenPreview() {
                 SearchScreen(
                     query = query,
                     watchedSymbols = watchedSymbols,
-                    searchStocksResult = searchStocksResult,
+                    searchStocksResult = Result.Loading,
                     onSymbolClicked = {
                         if (watchedSymbols.contains(it))
                             watchedSymbols.remove(it)
