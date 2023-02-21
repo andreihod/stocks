@@ -1,14 +1,26 @@
 package com.andreih.stocks.data.model
 
-import java.math.BigDecimal
+@JvmInline
+value class StockQuoteCurrency(val value: String)
+
+@JvmInline
+value class StockQuoteTimezone(val value: String)
+
+@JvmInline
+value class StockQuoteMarketState(val value: String)
 
 data class StockQuote(
-    val symbol: String,
-    val open: Double,
-    val high: Double,
-    val low: Double,
-    val price: Double,
-    val volume: Double,
-    val change: Double,
-    val changePercent: String,
+    val symbol: StockSymbol,
+    val stockName: StockName,
+    val stockLongName: StockLongName,
+    val currency: StockQuoteCurrency,
+    val timezone: StockQuoteTimezone,
+    val marketChange: Double,
+    val marketChangePercent: Double,
+    val marketPrice: Double,
+    val marketDayHigh: Double,
+    val marketDayLow: Double,
+    val marketVolume: Double,
+    val marketPreviousClose: Double,
+    val marketState: StockQuoteMarketState
 )
