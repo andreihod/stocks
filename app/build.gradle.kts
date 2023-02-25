@@ -122,6 +122,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
     implementation("androidx.compose.material3:material3:1.1.0-alpha05")
     implementation("androidx.compose.material:material-icons-extended:1.3.1")
+    implementation("com.google.accompanist:accompanist-placeholder-material:0.29.1-alpha")
     implementation("androidx.navigation:navigation-compose:2.5.3")
     implementation("com.google.dagger:hilt-android:2.44.2")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")

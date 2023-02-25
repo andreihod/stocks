@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.andreih.stocks.ui.StocksApp
 import com.andreih.stocks.ui.screen.SearchScreen
+import com.andreih.stocks.ui.screen.StocksScreen
 import com.andreih.stocks.ui.theme.StocksTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -18,7 +19,7 @@ class MainActivity : ComponentActivity() {
             StocksTheme {
                 StocksApp(
                     stocksScreen = {
-                        // TO-DO Stocks screen
+                        StocksScreen(hiltViewModel())
                     },
                     searchScreen = {
                         SearchScreen(hiltViewModel())
