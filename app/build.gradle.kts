@@ -113,14 +113,14 @@ dependencies {
     val roomVersion = "2.5.0"
 
     implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha05")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha05")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0-alpha05")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-rc01")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0-rc01")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0-rc01")
     implementation("androidx.activity:activity-compose:1.6.1")
     implementation("androidx.compose.ui:ui:$composeVersion")
     implementation("androidx.compose.ui:ui-text-google-fonts:$composeVersion")
     implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
-    implementation("androidx.compose.material3:material3:1.1.0-alpha05")
+    implementation("androidx.compose.material3:material3:1.1.0-alpha07")
     implementation("androidx.compose.material:material-icons-extended:1.3.1")
     implementation("com.google.accompanist:accompanist-placeholder-material:0.29.1-alpha")
     implementation("androidx.navigation:navigation-compose:2.5.3")
