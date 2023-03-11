@@ -42,11 +42,11 @@ class StocksRepositoryImpl @Inject constructor(
         flow { emit(yahooFinanceNetwork.search(query).map(NetworkStock::intoStock)) }.asResult()
 
     override suspend fun watchSymbol(symbol: StockSymbol) {
-        stocksDao.insert(StockEntity(0, symbol.value))
+        stocksDao.insertStock(StockEntity(0, symbol.value))
     }
 
     override suspend fun unwatchSymbol(symbol: StockSymbol) {
-        stocksDao.deleteBySymbol(symbol.value)
+        stocksDao.deleteStockBySymbol(symbol.value)
     }
 
     override fun flowWatchedSymbols(): Flow<List<StockSymbol>> =

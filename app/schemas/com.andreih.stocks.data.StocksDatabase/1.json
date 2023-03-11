@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e83d39770e4fff12446e97637d45e150",
+    "identityHash": "095af952d3810956581aa80a0c8602ac",
     "entities": [
       {
         "tableName": "stocks",
@@ -39,12 +39,120 @@
           }
         ],
         "foreignKeys": []
+      },
+      {
+        "tableName": "quotes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `stock_symbol` TEXT NOT NULL, `stock_name` TEXT NOT NULL, `stock_long_name` TEXT NOT NULL, `currency` TEXT NOT NULL, `timezone` TEXT NOT NULL, `market_change` REAL NOT NULL, `market_change_percent` REAL NOT NULL, `market_price` REAL NOT NULL, `market_day_high` REAL NOT NULL, `market_day_low` REAL NOT NULL, `market_volume` REAL NOT NULL, `market_previous_close` REAL NOT NULL, `market_state` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "uid",
+            "columnName": "uid",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "symbol",
+            "columnName": "stock_symbol",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "stockName",
+            "columnName": "stock_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "stockLongName",
+            "columnName": "stock_long_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currency",
+            "columnName": "currency",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timezone",
+            "columnName": "timezone",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "marketChange",
+            "columnName": "market_change",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "marketChangePercent",
+            "columnName": "market_change_percent",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "marketPrice",
+            "columnName": "market_price",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "marketDayHigh",
+            "columnName": "market_day_high",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "marketDayLow",
+            "columnName": "market_day_low",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "marketVolume",
+            "columnName": "market_volume",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "marketPreviousClose",
+            "columnName": "market_previous_close",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "marketState",
+            "columnName": "market_state",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "uid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_quotes_stock_symbol",
+            "unique": true,
+            "columnNames": [
+              "stock_symbol"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_quotes_stock_symbol` ON `${TABLE_NAME}` (`stock_symbol`)"
+          }
+        ],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e83d39770e4fff12446e97637d45e150')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '095af952d3810956581aa80a0c8602ac')"
     ]
   }
 }
