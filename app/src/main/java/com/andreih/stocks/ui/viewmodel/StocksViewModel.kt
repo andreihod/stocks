@@ -19,11 +19,24 @@ class StocksViewModel @Inject constructor(
     val quotes = stocksRepository
         .flowWatchedSymbols()
         .conflate()
-        .flatMapConcat { fetchRemoteQuotes(it).onStart { emit(it.associateWith { null }) } }
+        .flatMapConcat(::fetchRemoteQuotes)
         .stateIn(viewModelScope, SharingStarted.Lazily, mapOf())
 
-    private suspend fun fetchRemoteQuotes(symbols: List<StockSymbol>): Flow<Map<StockSymbol, StockQuote?>> =
-        stocksRepository.quotes(symbols)
+    private suspend fun fetchRemoteQuotes(symbols: List<StockSymbol>) =
+        stocksRepository.remoteQuotes(symbols)
             .filterIsInstance<Result.Success<List<StockQuote>>>()
-            .map { it.data.associateBy(StockQuote::symbol) }
+            .onEach(::cacheRemoteQuotes)
+            .map(::associateRemoteQuotes)
+            .onStart { emit(fetchLocalQuotes(symbols)) }
+
+    private suspend fun cacheRemoteQuotes(result: Result.Success<List<StockQuote>>) {
+        stocksRepository.saveRemoteQuotes(result.data)
+    }
+
+    private fun associateRemoteQuotes(result: Result.Success<List<StockQuote>>): Map<StockSymbol, StockQuote?> {
+        return result.data.associateBy(StockQuote::symbol)
+    }
+
+    private suspend fun fetchLocalQuotes(symbols: List<StockSymbol>): Map<StockSymbol, StockQuote?> =
+        symbols.associateWith { null } + stocksRepository.localQuotes(symbols).associateBy(StockQuote::symbol)
 }

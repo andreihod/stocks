@@ -4,6 +4,7 @@ import com.andreih.stocks.data.model.*
 import com.andreih.stocks.commom.Result
 import com.andreih.stocks.data.dao.StocksDao
 import com.andreih.stocks.data.entity.StockEntity
+import com.andreih.stocks.data.entity.StockQuoteEntity
 import com.andreih.stocks.network.YahooFinanceNetworkDataSource
 import com.andreih.stocks.network.model.NetworkQuote
 import com.andreih.stocks.network.model.NetworkStock
@@ -24,6 +25,8 @@ class StocksRepositoryTest {
         override fun flowAllSymbols(): Flow<List<StockEntity>> = flowOf(listOf())
         override suspend fun insertStock(stock: StockEntity) {}
         override suspend fun deleteStockBySymbol(stockSymbol: String) {}
+        override suspend fun allQuotes(stockSymbols: List<String>) = listOf<StockQuoteEntity>()
+        override suspend fun insertQuotes(quotes: List<StockQuoteEntity>) {}
     }
 
     companion object {
@@ -145,7 +148,7 @@ class StocksRepositoryTest {
 
     @Test
     fun quotes_flowsListOfResultsWithSuccessAccordingly() = runTest {
-        val result = subjectSuccess.quotes(listOf(StockSymbol("AAPL"))).toList()
+        val result = subjectSuccess.remoteQuotes(listOf(StockSymbol("AAPL"))).toList()
 
         assertEquals(
             listOf(
@@ -158,7 +161,7 @@ class StocksRepositoryTest {
 
     @Test
     fun quotes_flowsListOfResultsWithErrorAccordingly() = runTest {
-        val result = subjectError.quotes(listOf(StockSymbol("AAPL"))).toList()
+        val result = subjectError.remoteQuotes(listOf(StockSymbol("AAPL"))).toList()
 
         assertEquals(
             listOf(
