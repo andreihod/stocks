@@ -7,6 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
 import com.andreih.stocks.data.dao.StocksDao
 import com.andreih.stocks.data.entity.StockEntity
+import com.andreih.stocks.data.entity.StockQuoteEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.test.runTest
@@ -43,10 +44,10 @@ class StocksDatabaseTest {
             val stockA = StockEntity(0, "GOOG")
             val stockB = StockEntity(0, "IBM")
 
-            stocksDao.insert(stockA)
+            stocksDao.insertStock(stockA)
             assertEquals(listOf(StockEntity(1, "GOOG")), awaitItem())
 
-            stocksDao.insert(stockB)
+            stocksDao.insertStock(stockB)
             assertEquals(
                 listOf(
                     StockEntity(1, "GOOG"),
@@ -61,11 +62,11 @@ class StocksDatabaseTest {
     fun deletesAndFlowsAccordingly() = runTest {
         val stockA = StockEntity(0, "GOOG")
         val stockB = StockEntity(0, "IBM")
-        stocksDao.insert(stockA)
-        stocksDao.insert(stockB)
+        stocksDao.insertStock(stockA)
+        stocksDao.insertStock(stockB)
 
         stocksDao.flowAllSymbols().distinctUntilChanged().test {
-            stocksDao.deleteBySymbol("GOOG")
+            stocksDao.deleteStockBySymbol("GOOG")
             assertEquals(listOf(StockEntity(2, "IBM")), awaitItem())
         }
     }
@@ -75,10 +76,55 @@ class StocksDatabaseTest {
         try {
             val stockA = StockEntity(0, "GOOG")
             val stockB = StockEntity(0, "GOOG")
-            stocksDao.insert(stockA)
-            stocksDao.insert(stockB)
+            stocksDao.insertStock(stockA)
+            stocksDao.insertStock(stockB)
         } catch (t: Throwable) {
             fail("Expected to not thrown $t")
         }
+    }
+
+    @Test
+    fun insertOrReplaceStockQuotes() = runTest {
+        assertEquals(listOf<StockQuoteEntity>(), stocksDao.allQuotes(listOf()))
+
+        val quoteA = StockQuoteEntity(
+            symbol = "GOOG",
+            stockName = "Google",
+            stockLongName = "Google Inc.",
+            currency = "USD",
+            timezone = "NewYork/USA",
+            marketChange = 1.0,
+            marketChangePercent = 0.12,
+            marketPrice = 100.1,
+            marketDayHigh = 101.2,
+            marketDayLow = 99.8,
+            marketPreviousClose = 99.9,
+            marketVolume = 1000300.0,
+            marketState = "OPEN"
+        )
+
+        stocksDao.insertQuotes(listOf(quoteA))
+        assertEquals(listOf(quoteA.copy(uid = 1)), stocksDao.allQuotes(listOf("GOOG")))
+
+        val updatedQuoteA = quoteA.copy(marketDayHigh = 103.5)
+        val quoteB = StockQuoteEntity(
+            symbol = "AMZN",
+            stockName = "Amazon",
+            stockLongName = "Amazon Inc.",
+            currency = "USD",
+            timezone = "NewYork/USA",
+            marketChange = 1.0,
+            marketChangePercent = 0.12,
+            marketPrice = 100.1,
+            marketDayHigh = 101.2,
+            marketDayLow = 99.8,
+            marketPreviousClose = 99.9,
+            marketVolume = 1000300.0,
+            marketState = "OPEN"
+        )
+
+        stocksDao.insertQuotes(listOf(updatedQuoteA, quoteB))
+        val expectedQuotes = listOf(updatedQuoteA.copy(uid = 2), quoteB.copy(uid = 3))
+        assertEquals(expectedQuotes, stocksDao.allQuotes(listOf("GOOG", "AMZN")))
     }
 }
