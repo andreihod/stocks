@@ -35,3 +35,20 @@ data class StockQuoteEntity(
     @ColumnInfo(name = "market_state")
     val marketState: String
 )
+
+fun StockQuoteEntity.intoStockQuote(): StockQuote =
+    StockQuote(
+        symbol = StockSymbol(symbol),
+        stockName = StockName(stockName),
+        stockLongName = StockLongName(stockLongName),
+        currency = StockQuoteCurrency(currency),
+        timezone = StockQuoteTimezone(timezone),
+        marketChange = marketChange,
+        marketChangePercent = marketChangePercent,
+        marketPrice = marketPrice,
+        marketDayHigh = marketDayHigh,
+        marketDayLow = marketDayLow,
+        marketVolume = marketVolume,
+        marketPreviousClose = marketPreviousClose,
+        marketState = StockQuoteMarketState(marketState)
+    )

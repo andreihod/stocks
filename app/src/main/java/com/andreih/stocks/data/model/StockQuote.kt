@@ -1,5 +1,6 @@
 package com.andreih.stocks.data.model
 
+import com.andreih.stocks.data.entity.StockQuoteEntity
 import java.text.NumberFormat
 import java.util.*
 
@@ -40,3 +41,20 @@ data class StockQuote(
     val marketVolumeFormatted: String get() = currencyFormatter.format(marketVolume)
     val marketPreviousCloseHighFormatted: String get() = currencyFormatter.format(marketPreviousClose)
 }
+
+fun StockQuote.intoStockQuoteEntity(): StockQuoteEntity =
+    StockQuoteEntity(
+        symbol = symbol.value,
+        stockName = stockName.value,
+        stockLongName = stockLongName.value,
+        currency = currency.value,
+        timezone = timezone.value,
+        marketChange = marketChange,
+        marketChangePercent = marketChangePercent,
+        marketPrice = marketPrice,
+        marketDayHigh = marketDayHigh,
+        marketDayLow = marketDayLow,
+        marketVolume = marketVolume,
+        marketPreviousClose = marketPreviousClose,
+        marketState = marketState.value
+    )
