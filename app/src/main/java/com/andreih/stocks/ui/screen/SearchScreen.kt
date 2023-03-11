@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.*
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,6 +43,7 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel()) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchScreen(
     query: String,
@@ -52,26 +52,9 @@ private fun SearchScreen(
     onSymbolClicked: (StockSymbol) -> Unit,
     onQueryChanged: (String) -> Unit
 ) {
-    var isSearching by remember { mutableStateOf(false) }
-
-    Column {
-        SearchBox(query, { isSearching = it }, onQueryChanged)
-
-        AnimatedVisibility(
-            visible = isSearching,
-            enter = expandHorizontally(),
-            exit = shrinkHorizontally()
-        ) {
-            Divider(
-                Modifier.padding(0.dp, 16.dp),
-                color = MaterialTheme.colorScheme.onBackground,
-                thickness = 1.dp
-            )
-        }
-
-        Box(Modifier.fillMaxSize()) {
-            StockSearchList(watchedSymbols, searchStocksResult, onSymbolClicked)
-        }
+    Column(Modifier.padding(16.dp).fillMaxSize(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        SearchBox(query, onQueryChanged)
+        StockSearchList(watchedSymbols, searchStocksResult, onSymbolClicked)
     }
 }
 
@@ -160,24 +143,14 @@ fun LazyItemScope.StockSearchItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBox(query: String, onFocusChanged: (Boolean) -> Unit, onQueryChanged: (String) -> Unit) {
-    val focusManager = LocalFocusManager.current
-
-    LaunchedEffect(query) {
-        if (query.isEmpty()) {
-            focusManager.clearFocus()
-        }
-    }
-
+fun SearchBox(query: String, onQueryChanged: (String) -> Unit) {
     OutlinedTextField(
         value = query,
+        onValueChange = onQueryChanged,
+        modifier = Modifier.fillMaxWidth(),
         placeholder = { Text("Search a stock") },
         maxLines = 1,
         singleLine = true,
-        onValueChange = onQueryChanged,
-        modifier = Modifier
-            .fillMaxWidth()
-            .onFocusChanged { onFocusChanged(it.isFocused) },
         leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search") },
         shape = RoundedCornerShape(100.dp),
         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -207,20 +180,18 @@ fun SearchScreenPreview() {
         )
 
         Surface(modifier = Modifier.fillMaxSize()) {
-            Column(Modifier.padding(16.dp)) {
-                SearchScreen(
-                    query = query,
-                    watchedSymbols = watchedSymbols,
-                    searchStocksResult = Result.Loading,
-                    onSymbolClicked = {
-                        if (watchedSymbols.contains(it))
-                            watchedSymbols.remove(it)
-                        else
-                            watchedSymbols.add(it)
-                    },
-                    onQueryChanged = { query = it }
-                )
-            }
+            SearchScreen(
+                query = query,
+                watchedSymbols = watchedSymbols,
+                searchStocksResult = searchStocksResult,
+                onSymbolClicked = {
+                    if (watchedSymbols.contains(it))
+                        watchedSymbols.remove(it)
+                    else
+                        watchedSymbols.add(it)
+                },
+                onQueryChanged = { query = it }
+            )
         }
     }
 }

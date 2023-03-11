@@ -69,9 +69,7 @@ fun StocksApp(
         NavHost(
             navController,
             startDestination = Screen.Stocks.route,
-            Modifier
-                .padding(innerPadding)
-                .padding(16.dp)
+            Modifier.padding(innerPadding)
         ) {
             composable(Screen.Stocks.route, content = stocksScreen)
             composable(Screen.Search.route, content = searchScreen)
