@@ -10,17 +10,14 @@ import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.sp
 import com.andreih.stocks.R
 
-@OptIn(ExperimentalTextApi::class)
 val provider = GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",
     providerPackage = "com.google.android.gms",
     certificates = R.array.com_google_android_gms_fonts_certs
 )
 
-@OptIn(ExperimentalTextApi::class)
 val fontName = GoogleFont("Manrope")
 
-@OptIn(ExperimentalTextApi::class)
 val fontFamily = FontFamily(
     Font(googleFont = fontName, fontProvider = provider)
 )
