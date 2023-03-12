@@ -28,18 +28,20 @@ data class StockQuote(
     val marketPreviousClose: Double,
     val marketState: StockQuoteMarketState
 ) {
-    private val percentFormatter = NumberFormat.getPercentInstance()
+    private val percentFormatter = NumberFormat.getPercentInstance().apply {
+        maximumFractionDigits = 2
+    }
     private val currencyFormatter = NumberFormat.getCurrencyInstance().apply {
         currency = Currency.getInstance(this@StockQuote.currency.value)
     }
 
-    val marketChangePercentFormatted: String get() = percentFormatter.format(marketChangePercent)
+    val marketChangePercentFormatted: String get() = percentFormatter.format(marketChangePercent / 100.0)
     val marketChangeFormatted: String get() = currencyFormatter.format(marketChange)
     val marketPriceFormatted: String get() = currencyFormatter.format(marketPrice)
     val marketDayHighFormatted: String get() = currencyFormatter.format(marketDayHigh)
     val marketDayLowFormatted: String get() = currencyFormatter.format(marketDayLow)
     val marketVolumeFormatted: String get() = currencyFormatter.format(marketVolume)
-    val marketPreviousCloseHighFormatted: String get() = currencyFormatter.format(marketPreviousClose)
+    val marketPreviousCloseFormatted: String get() = "Prev. ${currencyFormatter.format(marketPreviousClose)}"
 }
 
 fun StockQuote.intoStockQuoteEntity(): StockQuoteEntity =
