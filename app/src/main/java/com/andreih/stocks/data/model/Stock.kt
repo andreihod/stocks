@@ -20,7 +20,7 @@ value class StockSectorName(val value: String)
 
 data class Stock(
     val name: StockName,
-    val longName: StockLongName,
+    val longName: StockLongName?,
     val symbol: StockSymbol,
     val exchangeSymbol: StockExchangeSymbol,
     val exchangeName: StockExchangeName,
