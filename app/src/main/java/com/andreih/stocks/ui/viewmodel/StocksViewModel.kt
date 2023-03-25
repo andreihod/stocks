@@ -13,6 +13,7 @@ import com.andreih.stocks.data.repository.StocksRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -34,6 +35,8 @@ class StocksViewModel @Inject constructor(
 
     val quotes = symbolsFlow
         .conflate()
+        // Keep updating the flow every 30s
+        .transformLatest { while (true) { emit(it); delay(30_000) } }
         .flatMapConcat(::fetchRemoteQuotes)
         .stateIn(viewModelScope, SharingStarted.Lazily, mapOf())
 
