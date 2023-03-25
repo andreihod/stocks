@@ -21,7 +21,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.andreih.stocks.ui.theme.StocksTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StocksApp(
     stocksScreen: @Composable (NavBackStackEntry) -> Unit,

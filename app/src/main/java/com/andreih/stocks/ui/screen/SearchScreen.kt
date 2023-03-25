@@ -43,7 +43,6 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel()) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchScreen(
     query: String,
