@@ -1,5 +1,6 @@
 package com.andreih.stocks.network.model
 
+import com.andreih.stocks.commom.removeRepeatedWhiteSpaces
 import com.andreih.stocks.data.model.*
 import kotlinx.serialization.Serializable
 
@@ -23,8 +24,8 @@ data class NetworkQuote(
 fun NetworkQuote.intoStockQuote(): StockQuote =
     StockQuote(
         symbol = StockSymbol(symbol),
-        stockName = StockName(shortName),
-        stockLongName = StockLongName(shortName),
+        stockName = StockName(shortName.removeRepeatedWhiteSpaces()),
+        stockLongName = StockLongName(shortName.removeRepeatedWhiteSpaces()),
         currency = StockQuoteCurrency(currency),
         timezone = StockQuoteTimezone(exchangeTimezoneName),
         marketChange = regularMarketChange,

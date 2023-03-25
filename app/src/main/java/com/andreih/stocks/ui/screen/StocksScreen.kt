@@ -77,7 +77,7 @@ private fun StocksScreen(quotes: List<Pair<StockSymbol, StockQuote?>>) {
                         )
                     }
 
-                    Column(Modifier.weight(0.6f), horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Column(Modifier.weight(0.7f), horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(
                             quote?.marketChangePercentFormatted ?: "Percent",
                             Modifier.placeholder(
