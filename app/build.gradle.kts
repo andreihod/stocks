@@ -120,6 +120,7 @@ dependencies {
     implementation("androidx.compose.ui:ui:$composeVersion")
     implementation("androidx.compose.ui:ui-text-google-fonts:$composeVersion")
     implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
+    implementation("androidx.compose.material:material:1.4.0")
     implementation("androidx.compose.material3:material3:1.1.0-beta01")
     implementation("androidx.compose.material:material-icons-extended:1.4.0")
     implementation("com.google.accompanist:accompanist-placeholder-material:0.29.1-alpha")
