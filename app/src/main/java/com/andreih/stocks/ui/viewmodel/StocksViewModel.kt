@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class StocksViewModel @Inject constructor(
     private val stocksRepository: StocksRepository
@@ -34,11 +34,9 @@ class StocksViewModel @Inject constructor(
         .transformLatest { symbols -> emit(symbols); refreshingFlow.collect { emit(symbols) } }
 
     val quotes = symbolsFlow
-        .conflate()
         // Keep updating the flow every 30s
-        .transformLatest { while (true) { emit(it); delay(30_000) } }
-        .flatMapConcat(::fetchRemoteQuotes)
-        .stateIn(viewModelScope, SharingStarted.Lazily, mapOf())
+        .transformLatest { while (true) { emitAll(fetchRemoteQuotes(it)); delay(30_000) } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 10_000), null)
 
     fun refresh() {
         isRefreshing = true

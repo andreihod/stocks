@@ -17,8 +17,7 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,12 +39,14 @@ fun StocksScreen(viewModel: StocksViewModel = viewModel()) {
     val isRefreshing = viewModel.isRefreshing
     val quotes by viewModel.quotes.collectAsStateWithLifecycle()
 
-    StocksScreen(
-        quotes = quotes.toList(),
-        isRefreshing = isRefreshing,
-        onRefresh = { viewModel.refresh() },
-        onRemove = { viewModel.removeSymbol(it) }
-    )
+    quotes?.let {
+        StocksScreen(
+            quotes = it.toList(),
+            isRefreshing = isRefreshing,
+            onRefresh = { viewModel.refresh() },
+            onRemove = { symbol -> viewModel.removeSymbol(symbol) }
+        )
+    }
 }
 
 @OptIn(
@@ -72,17 +73,41 @@ private fun StocksScreen(
                 .padding(padding)
                 .pullRefresh(pullRefreshState)
         ) {
-            LazyColumn(Modifier.fillMaxSize()) {
-                items(quotes, key = { (symbol, _) -> symbol.value }) {
-                    StockItem(it, onRemove, Modifier.animateItemPlacement())
+            if (quotes.isEmpty()) {
+                Column(
+                    Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxSize(),
+                    Arrangement.Center,
+                    Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        "You're not following any stocks :(",
+                        color = MaterialTheme.colorScheme.outline,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text("Consider searching one",
+                        color = MaterialTheme.colorScheme.outline,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
-            }
+            } else {
+                LazyColumn(Modifier.fillMaxSize()) {
+                    items(quotes, key = { (symbol, _) -> symbol.value }) { item ->
+                        StockItem(
+                            item,
+                            modifier = Modifier.animateItemPlacement(),
+                            onRemove = onRemove
+                        )
+                    }
+                }
 
-            PullRefreshIndicator(
-                isRefreshing,
-                pullRefreshState,
-                Modifier.align(Alignment.TopCenter)
-            )
+                PullRefreshIndicator(
+                    isRefreshing,
+                    pullRefreshState,
+                    Modifier.align(Alignment.TopCenter)
+                )
+            }
         }
     }
 }
@@ -213,6 +238,6 @@ private fun PreviewStocksScreen() {
             Pair(StockSymbol("GOOG"), null)
         )
 
-        StocksScreen(quotes = quotes, isRefreshing = false, onRefresh = {}, onRemove = {})
+        StocksScreen(quotes = listOf(), isRefreshing = false, onRefresh = {}, onRemove = {})
     }
 }
