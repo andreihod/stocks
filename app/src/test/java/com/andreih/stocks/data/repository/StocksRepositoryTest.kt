@@ -1,16 +1,14 @@
 package com.andreih.stocks.data.repository
 
-import com.andreih.stocks.data.model.*
 import com.andreih.stocks.commom.Result
 import com.andreih.stocks.data.dao.StocksDao
 import com.andreih.stocks.data.entity.StockEntity
 import com.andreih.stocks.data.entity.StockQuoteEntity
+import com.andreih.stocks.data.model.*
 import com.andreih.stocks.network.YahooFinanceNetworkDataSource
 import com.andreih.stocks.network.model.NetworkQuote
 import com.andreih.stocks.network.model.NetworkStock
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -22,7 +20,7 @@ class StocksRepositoryTest {
     private lateinit var subjectSuccess: StocksRepository
     private lateinit var subjectError: StocksRepository
     private val stocksDao = object : StocksDao {
-        override fun flowAllSymbols(): Flow<List<StockEntity>> = flowOf(listOf())
+        override suspend fun listStocks(): List<StockEntity> = listOf()
         override suspend fun insertStock(stock: StockEntity) {}
         override suspend fun deleteStockBySymbol(stockSymbol: String) {}
         override suspend fun allQuotes(stockSymbols: List<String>) = listOf<StockQuoteEntity>()

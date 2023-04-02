@@ -6,10 +6,14 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 abstract class StocksModule {
+
+    @Singleton
     @Binds
     abstract fun bindStocksRepository(
         stocksRepositoryImpl: StocksRepositoryImpl
