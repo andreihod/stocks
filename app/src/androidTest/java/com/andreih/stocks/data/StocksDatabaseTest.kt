@@ -39,36 +39,24 @@ class StocksDatabaseTest {
     }
 
     @Test
-    fun insertsAndFlowsAccordingly() = runTest {
-        stocksDao.flowAllSymbols().distinctUntilChanged().test {
-            val stockA = StockEntity(0, "GOOG")
-            val stockB = StockEntity(0, "IBM")
-
-            stocksDao.insertStock(stockA)
-            assertEquals(listOf(StockEntity(1, "GOOG")), awaitItem())
-
-            stocksDao.insertStock(stockB)
-            assertEquals(
-                listOf(
-                    StockEntity(1, "GOOG"),
-                    StockEntity(2, "IBM")
-                ),
-                awaitItem()
-            )
-        }
-    }
-
-    @Test
-    fun deletesAndFlowsAccordingly() = runTest {
+    fun insertsAndRemoveCorrectly() = runTest {
         val stockA = StockEntity(0, "GOOG")
         val stockB = StockEntity(0, "IBM")
-        stocksDao.insertStock(stockA)
-        stocksDao.insertStock(stockB)
 
-        stocksDao.flowAllSymbols().distinctUntilChanged().test {
-            stocksDao.deleteStockBySymbol("GOOG")
-            assertEquals(listOf(StockEntity(2, "IBM")), awaitItem())
-        }
+        stocksDao.insertStock(stockA)
+        assertEquals(listOf(StockEntity(1, "GOOG")), stocksDao.listStocks())
+
+        stocksDao.insertStock(stockB)
+        assertEquals(
+            listOf(
+                StockEntity(1, "GOOG"),
+                StockEntity(2, "IBM")
+            ),
+            stocksDao.listStocks()
+        )
+
+        stocksDao.deleteStockBySymbol("GOOG")
+        assertEquals(listOf(StockEntity(2, "IBM")), stocksDao.listStocks())
     }
 
     @Test

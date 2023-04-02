@@ -15,6 +15,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
@@ -31,7 +32,6 @@ class StocksViewModel @Inject constructor(
         .flowWatchedSymbols()
         // Emit the latest symbol and listen to refresh updates
         .transformLatest { symbols -> emit(symbols); refreshingFlow.collect { emit(symbols) } }
-        .filter { it.isNotEmpty() }
 
     val quotes = symbolsFlow
         .conflate()
@@ -42,6 +42,12 @@ class StocksViewModel @Inject constructor(
 
     fun refresh() {
         isRefreshing = true
+    }
+
+    fun removeSymbol(symbol: StockSymbol) {
+        viewModelScope.launch {
+            stocksRepository.unwatchSymbol(symbol)
+        }
     }
 
     private suspend fun fetchRemoteQuotes(symbols: List<StockSymbol>) =

@@ -15,10 +15,7 @@ import com.andreih.stocks.network.model.NetworkQuote
 import com.andreih.stocks.network.model.NetworkStock
 import com.andreih.stocks.network.model.intoStock
 import com.andreih.stocks.network.model.intoStockQuote
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 interface StocksRepository {
@@ -41,6 +38,8 @@ class StocksRepositoryImpl @Inject constructor(
     private val yahooFinanceNetwork: YahooFinanceNetworkDataSource,
     private val stocksDao: StocksDao
 ) : StocksRepository {
+    private val stocksFlow = MutableStateFlow<List<StockEntity>?>(null)
+
     override suspend fun localQuotes(symbols: List<StockSymbol>): List<StockQuote> =
         stocksDao.allQuotes(symbols.map(StockSymbol::value)).map(StockQuoteEntity::intoStockQuote)
 
@@ -56,15 +55,17 @@ class StocksRepositoryImpl @Inject constructor(
 
     override suspend fun watchSymbol(symbol: StockSymbol) {
         stocksDao.insertStock(StockEntity(0, symbol.value))
+        stocksFlow.emit(stocksDao.listStocks())
     }
 
     override suspend fun unwatchSymbol(symbol: StockSymbol) {
         stocksDao.deleteStockBySymbol(symbol.value)
+        stocksFlow.emit(stocksDao.listStocks())
     }
 
     override fun flowWatchedSymbols(): Flow<List<StockSymbol>> =
-        stocksDao
-            .flowAllSymbols()
-            .map { it.map { stock -> StockSymbol(stock.symbol) } }
-            .distinctUntilChanged()
+        stocksFlow
+            .onStart { emit(stocksDao.listStocks()) }
+            .filterNotNull()
+            .map { stock -> stock.map { StockSymbol(it.symbol) } }
 }

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface StocksDao {
     @Query("SELECT uid, stock_symbol FROM stocks ORDER BY uid")
-    fun flowAllSymbols(): Flow<List<StockEntity>>
+    suspend fun listStocks(): List<StockEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertStock(stock: StockEntity)
