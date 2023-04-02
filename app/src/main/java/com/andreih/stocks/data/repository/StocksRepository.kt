@@ -68,4 +68,5 @@ class StocksRepositoryImpl @Inject constructor(
             .onStart { emit(stocksDao.listStocks()) }
             .filterNotNull()
             .map { stock -> stock.map { StockSymbol(it.symbol) } }
+            .distinctUntilChanged()
 }

@@ -51,7 +51,10 @@ private fun SearchScreen(
     onSymbolClicked: (StockSymbol) -> Unit,
     onQueryChanged: (String) -> Unit
 ) {
-    Column(Modifier.padding(16.dp).fillMaxSize(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(
+        Modifier
+            .padding(16.dp)
+            .fillMaxSize(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         SearchBox(query, onQueryChanged)
         StockSearchList(watchedSymbols, searchStocksResult, onSymbolClicked)
     }
@@ -66,15 +69,36 @@ fun StockSearchList(
     Box {
         when (searchStocksResult) {
             is Result.Success -> {
-                LazyColumn {
-                    items(searchStocksResult.data, key = { it.key }) {
-                        val hasSymbolWatched by remember(watchedSymbols) {
-                            derivedStateOf {
-                                watchedSymbols.contains(it.symbol)
+                if (searchStocksResult.data.isEmpty()) {
+                    Column(
+                        Modifier
+                            .padding(horizontal = 16.dp)
+                            .fillMaxSize(),
+                        Arrangement.Center,
+                        Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            "You can search by name or ticker, for example: ",
+                            color = MaterialTheme.colorScheme.outline,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Text(
+                            "\"AAPL\", \"Apple Inc.\", \"Tesla\", \"TSLA\"",
+                            color = MaterialTheme.colorScheme.outline,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                } else {
+                    LazyColumn {
+                        items(searchStocksResult.data, key = { it.key }) {
+                            val hasSymbolWatched by remember(watchedSymbols) {
+                                derivedStateOf {
+                                    watchedSymbols.contains(it.symbol)
+                                }
                             }
-                        }
 
-                        StockSearchItem(it, hasSymbolWatched, onSymbolClicked)
+                            StockSearchItem(it, hasSymbolWatched, onSymbolClicked)
+                        }
                     }
                 }
             }
@@ -83,7 +107,7 @@ fun StockSearchList(
                     CircularProgressIndicator()
                 }
             }
-            else -> {}
+            is Result.Error -> {}
         }
     }
 }
@@ -147,13 +171,15 @@ fun SearchBox(query: String, onQueryChanged: (String) -> Unit) {
         value = query,
         onValueChange = onQueryChanged,
         modifier = Modifier.fillMaxWidth(),
-        placeholder = { Text("Search a stock") },
+        placeholder = { Text("Search a stock", style = MaterialTheme.typography.titleMedium) },
         maxLines = 1,
         singleLine = true,
         leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search") },
         shape = RoundedCornerShape(100.dp),
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color.Transparent
+            unfocusedBorderColor = Color.Transparent,
+            focusedBorderColor = Color.Transparent,
+            disabledBorderColor = Color.Transparent
         )
     )
 }
