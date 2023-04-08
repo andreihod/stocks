@@ -2,6 +2,7 @@
 
 import java.util.Properties
 import java.io.FileInputStream
+import com.google.protobuf.gradle.*
 
 plugins {
     id("com.android.application")
@@ -9,6 +10,7 @@ plugins {
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
     id("org.jetbrains.kotlin.plugin.serialization") version "1.6.10"
+    id("com.google.protobuf") version "0.8.19"
 }
 
 val localProperties = Properties()
@@ -127,6 +129,10 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.5.3")
     implementation("com.google.dagger:hilt-android:2.44.2")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation("androidx.datastore:datastore:1.0.0")
+    implementation("com.google.protobuf:protobuf-lite:3.0.1")
+    protobuf(files("proto/"))
+
     kapt("com.google.dagger:hilt-compiler:2.44.2")
 
     implementation("androidx.room:room-runtime:$roomVersion")
@@ -152,4 +158,26 @@ dependencies {
     
     debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")
     debugImplementation("androidx.compose.ui:ui-test-manifest:$composeVersion")
+}
+
+protobuf {
+    generatedFilesBaseDir = "$projectDir/src"
+
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.7.0"
+    }
+
+    plugins {
+        id("javalite") {
+            artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
+        }
+    }
+
+    generateProtoTasks {
+        all().forEach {
+            it.plugins {
+                id("javalite") {}
+            }
+        }
+    }
 }
