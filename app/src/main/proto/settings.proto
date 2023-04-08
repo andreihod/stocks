@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option java_package = "com.andreih.stocks.proto";
+option java_multiple_files = true;
+
+message Empty {}
+
+message Settings {
+  oneof app_theme {
+    Empty system = 1;
+    Empty light = 2;
+    Empty dark = 3;
+  }
+}
