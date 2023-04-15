@@ -20,13 +20,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.andreih.stocks.data.model.StockQuote
-import com.andreih.stocks.data.model.StockSymbol
+import com.andreih.stocks.data.model.*
 import com.andreih.stocks.ui.theme.StocksTheme
 import com.andreih.stocks.ui.theme.success
 import com.andreih.stocks.ui.viewmodel.StocksViewModel
@@ -158,7 +158,7 @@ private fun StockItem(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Column(
-                    Modifier.weight(2f),
+                    Modifier.weight(1f, fill = true),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(symbol.value)
@@ -169,12 +169,13 @@ private fun StockItem(
                             highlight = PlaceholderHighlight.fade()
                         ),
                         fontSize = 14.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                         color = MaterialTheme.colorScheme.outline
                     )
                 }
 
                 Column(
-                    Modifier.weight(1f),
                     horizontalAlignment = Alignment.End,
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
@@ -197,7 +198,6 @@ private fun StockItem(
                 }
 
                 Column(
-                    Modifier.weight(0.7f),
                     horizontalAlignment = Alignment.End,
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
@@ -234,10 +234,45 @@ private fun StockItem(
 private fun PreviewStocksScreen() {
     StocksTheme(false) {
         val quotes = listOf(
-            Pair(StockSymbol("AAPL"), null),
-            Pair(StockSymbol("GOOG"), null)
+            Pair(
+                StockSymbol("AAPL"),
+                StockQuote(
+                    symbol = StockSymbol("AAPL"),
+                    stockName = StockName("Apple"),
+                    stockLongName = StockLongName("Apple Inc."),
+                    currency = StockQuoteCurrency("USD"),
+                    timezone = StockQuoteTimezone("New_York/US"),
+                    marketChange = 1.2,
+                    marketChangePercent = 0.023,
+                    marketPrice = 102.20,
+                    marketDayHigh = 103.1,
+                    marketDayLow = 101.98,
+                    marketVolume = 329292.02,
+                    marketPreviousClose = 100.21,
+                    marketState = StockQuoteMarketState("OPEN")
+                )
+            ),
+            Pair(
+                StockSymbol("GOOG"),
+                StockQuote(
+                    symbol = StockSymbol("GOOG"),
+                    stockName = StockName("Google Very Loooooooooooooooooong Name"),
+                    stockLongName = StockLongName("Google Inc."),
+                    currency = StockQuoteCurrency("USD"),
+                    timezone = StockQuoteTimezone("New_York/US"),
+                    marketChange = 1.2,
+                    marketChangePercent = 0.023,
+                    marketPrice = 102.20,
+                    marketDayHigh = 103.1,
+                    marketDayLow = 101.98,
+                    marketVolume = 329292.02,
+                    marketPreviousClose = 100.21,
+                    marketState = StockQuoteMarketState("OPEN")
+                )
+            ),
+            Pair(StockSymbol("AMZN"), null)
         )
 
-        StocksScreen(quotes = listOf(), isRefreshing = false, onRefresh = {}, onRemove = {})
+        StocksScreen(quotes = quotes, isRefreshing = false, onRefresh = {}, onRemove = {})
     }
 }
