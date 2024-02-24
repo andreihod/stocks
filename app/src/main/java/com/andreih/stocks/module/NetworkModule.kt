@@ -10,7 +10,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -32,7 +31,6 @@ abstract class YahooFinanceNetworkDataSourceModule {
 @InstallIn(SingletonComponent::class)
 object RetrofitYahooFinanceModule {
 
-    @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
     fun provideJson() = Json { ignoreUnknownKeys = true; explicitNulls = false }
@@ -43,7 +41,6 @@ object RetrofitYahooFinanceModule {
         return Retrofit.Builder()
             .baseUrl("https://${BuildConfig.X_RAPIDAPI_HOST}")
             .addConverterFactory(
-                @OptIn(ExperimentalSerializationApi::class)
                 json.asConverterFactory("application/json".toMediaType())
             )
             .client(

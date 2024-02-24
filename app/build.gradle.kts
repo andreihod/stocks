@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 import java.util.Properties
 import java.io.FileInputStream
 import com.google.protobuf.gradle.*
@@ -7,10 +5,12 @@ import com.google.protobuf.gradle.*
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
+    kotlin("kapt")
     id("com.google.dagger.hilt.android")
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.6.10"
-    id("com.google.protobuf") version "0.8.19"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.21"
+    id("com.google.protobuf") version "0.9.4"
+    id("com.google.devtools.ksp")
+    id("dev.jeran.futurist.android") version "1.6.0"
 }
 
 val localProperties = Properties()
@@ -18,20 +18,12 @@ localProperties.load(FileInputStream(rootProject.file("local.properties")))
 
 android {
     namespace = "com.andreih.stocks"
-    compileSdk = 33
-
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions{
-            kotlin.sourceSets.all {
-                languageSettings.optIn("kotlin.RequiresOptIn")
-            }
-        }
-    }
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.andreih.stocks"
         minSdk = 23
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -93,16 +85,11 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.0"
-    }
-
-    packagingOptions {
-        resources {
-            excludes.add("/META-INF/{AL2.0,LGPL2.1}")
-        }
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
 
     kapt {
@@ -111,34 +98,35 @@ android {
 }
 
 dependencies {
-    val composeVersion = "1.3.3"
-    val roomVersion = "2.5.0"
+    val composeVersion = "1.6.2"
+    val roomVersion = "2.6.1"
+    val hiltVersion = "2.50"
 
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
-    implementation("androidx.activity:activity-compose:1.7.0")
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.compose.ui:ui:$composeVersion")
     implementation("androidx.compose.ui:ui-text-google-fonts:$composeVersion")
     implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
-    implementation("androidx.compose.material:material:1.4.0")
-    implementation("androidx.compose.material3:material3:1.1.0-beta01")
-    implementation("androidx.compose.material:material-icons-extended:1.4.0")
+    implementation("androidx.compose.material:material:1.6.2")
+    implementation("androidx.compose.material3:material3:1.3.0-alpha01")
+    implementation("androidx.compose.material:material-icons-extended:1.6.2")
     implementation("com.google.accompanist:accompanist-placeholder-material:0.29.1-alpha")
-    implementation("androidx.navigation:navigation-compose:2.5.3")
-    implementation("com.google.dagger:hilt-android:2.44.2")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     implementation("androidx.datastore:datastore:1.0.0")
     implementation("com.google.protobuf:protobuf-lite:3.0.1")
     protobuf(files("proto/"))
 
-    kapt("com.google.dagger:hilt-compiler:2.44.2")
+    implementation("com.google.dagger:hilt-android:$hiltVersion")
+    kapt("com.google.dagger:hilt-compiler:$hiltVersion")
 
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
-    kapt("androidx.room:room-compiler:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
 
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
@@ -148,7 +136,7 @@ dependencies {
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
 
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     androidTestImplementation("app.cash.turbine:turbine:0.12.1")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
