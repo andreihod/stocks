@@ -8,14 +8,12 @@ import com.andreih.stocks.data.model.*
 import com.andreih.stocks.network.YahooFinanceNetworkDataSource
 import com.andreih.stocks.network.model.NetworkQuote
 import com.andreih.stocks.network.model.NetworkStock
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class StocksRepositoryTest {
     private lateinit var subjectSuccess: StocksRepository
     private lateinit var subjectError: StocksRepository

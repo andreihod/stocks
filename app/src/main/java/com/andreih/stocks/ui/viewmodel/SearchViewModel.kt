@@ -7,18 +7,16 @@ import com.andreih.stocks.commom.Result
 import com.andreih.stocks.data.model.StockSymbol
 import com.andreih.stocks.data.repository.StocksRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OptIn(FlowPreview::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val stocksRepository: StocksRepository
 ) : ViewModel() {
     private sealed class SearchInput {
-        object Empty : SearchInput()
+        data object Empty : SearchInput()
         data class Query(val query: String) : SearchInput()
     }
 
@@ -39,6 +37,7 @@ class SearchViewModel @Inject constructor(
         .conflate()
         .map(::handleSearchInput)
         .flattenConcat()
+        .onEach { println(it) }
         .stateIn(
             viewModelScope,
             SharingStarted.Lazily,

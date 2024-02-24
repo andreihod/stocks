@@ -1,17 +1,17 @@
 package com.andreih.stocks.ui
 
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ShowChart
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShowChart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -23,9 +23,9 @@ import com.andreih.stocks.ui.theme.StocksTheme
 
 @Composable
 fun StocksApp(
-    stocksScreen: @Composable (NavBackStackEntry) -> Unit,
-    searchScreen: @Composable (NavBackStackEntry) -> Unit,
-    settingsScreen: @Composable (NavBackStackEntry) -> Unit
+    stocksScreen: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit,
+    searchScreen: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit,
+    settingsScreen: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -78,9 +78,9 @@ fun StocksApp(
 }
 
 private sealed class Screen(val route: String, val text: String, val icon: ImageVector) {
-    object Stocks : Screen("stocks", "Stocks", Icons.Filled.ShowChart)
-    object Search : Screen("search", "Search", Icons.Filled.Search)
-    object Settings : Screen("settings", "Settings", Icons.Filled.Settings)
+    data object Stocks : Screen("stocks", "Stocks", Icons.AutoMirrored.Filled.ShowChart)
+    data object Search : Screen("search", "Search", Icons.Filled.Search)
+    data object Settings : Screen("settings", "Settings", Icons.Filled.Settings)
 }
 
 @Preview

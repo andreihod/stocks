@@ -1,13 +1,17 @@
 package com.andreih.stocks.ui.screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissValue
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
@@ -16,8 +20,14 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberDismissState
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -26,7 +36,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.andreih.stocks.data.model.*
+import com.andreih.stocks.data.model.StockLongName
+import com.andreih.stocks.data.model.StockName
+import com.andreih.stocks.data.model.StockQuote
+import com.andreih.stocks.data.model.StockQuoteCurrency
+import com.andreih.stocks.data.model.StockQuoteMarketState
+import com.andreih.stocks.data.model.StockQuoteTimezone
+import com.andreih.stocks.data.model.StockSymbol
 import com.andreih.stocks.ui.theme.StocksTheme
 import com.andreih.stocks.ui.theme.success
 import com.andreih.stocks.ui.viewmodel.StocksViewModel
@@ -49,11 +65,7 @@ fun StocksScreen(viewModel: StocksViewModel = viewModel()) {
     }
 }
 
-@OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalMaterialApi::class,
-    ExperimentalFoundationApi::class
-)
+@OptIn(ExperimentalMaterial3Api::class,)
 @Composable
 private fun StocksScreen(
     quotes: List<Pair<StockSymbol, StockQuote?>>,
@@ -112,7 +124,6 @@ private fun StocksScreen(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun StockItem(
     item: Pair<StockSymbol, StockQuote?>,

@@ -74,7 +74,7 @@ fun SettingsScreen(appTheme: AppTheme, onAppThemeChanged: (AppTheme) -> Unit) {
 
 @Preview
 @Composable
-fun SettingsScreen() {
+fun PreviewSettingsScreen() {
     StocksTheme {
         SettingsScreen(appTheme = AppTheme.Dark) { }
     }
